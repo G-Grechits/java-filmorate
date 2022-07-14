@@ -1,59 +1,59 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    private final Map<Integer, User> users = new HashMap<>();
-    private int autoId = 0;
+    private final UserService userService;
+
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
     @GetMapping
     public Collection<User> getAllUsers() {
-        log.info("Текущее количество пользователей: {}", users.size());
-        return users.values();
+        return userService.getAllUsers();
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@Positive @PathVariable long id) {
+        return userService.getUserById(id);
     }
 
     @PostMapping
     public User createUser(@Valid @RequestBody User user) {
-        if (users.values().stream().anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
-            throw new ValidationException(String.format("Пользователь с электронной почтой %s уже зарегистрирован.",
-                    user.getEmail()));
-        }
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может содержать пробелы.");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        user.setId(++autoId);
-        users.put(user.getId(), user);
-        log.info("Пользователь {} зарегистрирован.", user);
-        return user;
+        return userService.createUser(user);
     }
 
     @PutMapping
     public User updateUser(@Valid @RequestBody User user) {
-        if (!users.containsKey(user.getId())) {
-            throw new ValidationException(String.format("Пользователь с ID=%d не существует.", user.getId()));
-        }
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("Логин не может содержать пробелы.");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        users.put(user.getId(), user);
-        log.info("Информация по пользователю {} обновлена.", user);
-        return user;
+        return userService.updateUser(user);
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public void addToFriends(@Positive @PathVariable long id, @Positive @PathVariable long friendId) {
+        userService.addToFriends(id, friendId);
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public void removeFromFriends(@Positive @PathVariable long id, @Positive @PathVariable long friendId) {
+        userService.removeFromFriends(id, friendId);
+    }
+
+    @GetMapping("/{id}/friends")
+    public Collection<User> getAllFriends(@Positive @PathVariable long id) {
+        return userService.getAllFriends(id);
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public Collection<User> getCommonFriends(@Positive @PathVariable long id, @Positive @PathVariable long otherId) {
+        return userService.getCommonFriends(id, otherId);
     }
 }

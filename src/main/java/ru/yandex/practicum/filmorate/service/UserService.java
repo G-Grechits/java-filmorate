@@ -20,18 +20,31 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
+    /*в случае выбрасывания исключений текст в данном случае и ниже начинается с маленькой буквы не случайно: начальная
+    часть текста ошибок передаётся при создании новых объектов типа ErrorResponse в методах обработки исключений класса
+    ErrorHandler, а здесь передаётся уже пояснительная часть, следующая после двоеточия*/
+    private void checkUserId (long id) {
+        if (!userStorage.getUsers().containsKey(id)) {
+            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
+        }
+    }
+
+    private void checkUserLoginAndName(User user) {
+        if (user.getLogin().contains(" ")) {
+            throw new ValidationException("логин не может содержать пробелы.");
+        }
+        if (user.getName() == null || user.getName().isBlank()) {
+            user.setName(user.getLogin());
+        }
+    }
+
     public Collection<User> getAllUsers() {
         log.info("Текущее количество пользователей: {}.", userStorage.getUsers().size());
         return userStorage.getUsers().values();
     }
 
-    public User getUserById(long id) { /*в случае выбрасывания исключений текст в данном случае и ниже начинается
-    с маленькой буквы не случайно: начальная часть текста ошибок передаётся при создании новых объектов типа
-    ErrorResponse в методах обработки исключений класса ErrorHandler, а здесь передаётся уже пояснительная часть,
-    следующая после двоеточия*/
-        if (!userStorage.getUsers().containsKey(id)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
-        }
+    public User getUserById(long id) {
+        checkUserId(id);
         return userStorage.getUsers().get(id);
     }
 
@@ -40,12 +53,7 @@ public class UserService {
             throw new ValidationException(String.format("пользователь с электронной почтой %s уже зарегистрирован.",
                     user.getEmail()));
         }
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("логин не может содержать пробелы.");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        checkUserLoginAndName(user);
         user.setId(++autoId);
         userStorage.addUser(user);
         log.info("Пользователь {} зарегистрирован.", user);
@@ -53,48 +61,31 @@ public class UserService {
     }
 
     public User updateUser(User user) {
-        if (!userStorage.getUsers().containsKey(user.getId())) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", user.getId()));
-        }
-        if (user.getLogin().contains(" ")) {
-            throw new ValidationException("логин не может содержать пробелы.");
-        }
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
+        checkUserId(user.getId());
+        checkUserLoginAndName(user);
         userStorage.addUser(user);
         log.info("Информация по пользователю {} обновлена.", user);
         return user;
     }
 
     public void addToFriends(long id, long friendId) {
-        if (!userStorage.getUsers().containsKey(id)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
-        }
-        if (!userStorage.getUsers().containsKey(friendId)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", friendId));
-        }
+        checkUserId(id);
+        checkUserId(friendId);
         userStorage.getUsers().get(id).getFriends().add(friendId);
         userStorage.getUsers().get(friendId).getFriends().add(id);
         log.info("Пользователь {} добавлен в друзья.", userStorage.getUsers().get(friendId));
     }
 
     public void removeFromFriends(long id, long friendId) {
-        if (!userStorage.getUsers().containsKey(id)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
-        }
-        if (!userStorage.getUsers().containsKey(friendId)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", friendId));
-        }
+        checkUserId(id);
+        checkUserId(friendId);
         userStorage.getUsers().get(id).getFriends().remove(friendId);
         userStorage.getUsers().get(friendId).getFriends().remove(id);
         log.info("Пользователь {} удалён из друзей.", userStorage.getUsers().get(friendId));
     }
 
     public Collection<User> getAllFriends(long id) {
-        if (!userStorage.getUsers().containsKey(id)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
-        }
+        checkUserId(id);
         log.info("Количество друзей пользователя {}: {}.", userStorage.getUsers().get(id),
                 userStorage.getUsers().get(id).getFriends().size());
         return userStorage.getUsers().get(id).getFriends().stream()
@@ -103,12 +94,8 @@ public class UserService {
     }
 
     public Collection<User> getCommonFriends(long id, long otherId) {
-        if (!userStorage.getUsers().containsKey(id)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
-        }
-        if (!userStorage.getUsers().containsKey(otherId)) {
-            throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", otherId));
-        }
+        checkUserId(id);
+        checkUserId(otherId);
         return userStorage.getUsers().get(id).getFriends().stream()
                 .filter(friendId -> userStorage.getUsers().get(otherId).getFriends().contains(friendId))
                 .map(friendId -> userStorage.getUsers().get(friendId))

@@ -1,2 +1,3 @@
 # java-filmorate
-Template repository for Filmorate project.
+Ссылка на ER-диаграмму с кодом:
+https://app.quickdatabasediagrams.com/#/d/HYrVru

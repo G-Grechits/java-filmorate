@@ -29,19 +29,19 @@ public class FilmService {
     /*в случае выбрасывания исключений текст в данном случае и ниже начинается с маленькой буквы не случайно: начальная
     часть текста ошибок передаётся при создании новых объектов типа ErrorResponse в методах обработки исключений класса
     ErrorHandler, а здесь передаётся уже пояснительная часть, следующая после двоеточия*/
-    private void checkFilmId (long id) {
+    private void checkFilmId(long id) {
         if (!filmStorage.getFilms().containsKey(id)) {
             throw new ObjectNotFoundException(String.format("фильм с ID=%d не существует.", id));
         }
     }
 
-    private void checkUserId (long id) {
+    private void checkUserId(long id) {
         if (!userStorage.getUsers().containsKey(id)) {
             throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
         }
     }
 
-    private void checkFilmReleaseDate (Film film) {
+    private void checkFilmReleaseDate(Film film) {
         if (film.getReleaseDate().isBefore(birthdayOfCinema)) {
             throw new ValidationException("дата релиза фильма не может быть раньше 28 декабря 1895 года.");
         }

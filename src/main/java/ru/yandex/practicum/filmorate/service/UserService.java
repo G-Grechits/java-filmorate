@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
+import ru.yandex.practicum.filmorate.exception.SameObjectException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
@@ -23,9 +24,15 @@ public class UserService {
     /*в случае выбрасывания исключений текст в данном случае и ниже начинается с маленькой буквы не случайно: начальная
     часть текста ошибок передаётся при создании новых объектов типа ErrorResponse в методах обработки исключений класса
     ErrorHandler, а здесь передаётся уже пояснительная часть, следующая после двоеточия*/
-    private void checkUserId (long id) {
+    private void checkUserId(long id) {
         if (!userStorage.getUsers().containsKey(id)) {
             throw new ObjectNotFoundException(String.format("пользователь с ID=%d не существует.", id));
+        }
+    }
+
+    private void checkIdForMatch(long id, long otherId) {
+        if (id == otherId) {
+            throw new SameObjectException("пользователь не может добавить в друзья или удалить из друзей сам себя.");
         }
     }
 
@@ -71,6 +78,7 @@ public class UserService {
     public void addToFriends(long id, long friendId) {
         checkUserId(id);
         checkUserId(friendId);
+        checkIdForMatch(id, friendId);
         userStorage.getUsers().get(id).getFriends().add(friendId);
         userStorage.getUsers().get(friendId).getFriends().add(id);
         log.info("Пользователь {} добавлен в друзья.", userStorage.getUsers().get(friendId));
@@ -79,6 +87,7 @@ public class UserService {
     public void removeFromFriends(long id, long friendId) {
         checkUserId(id);
         checkUserId(friendId);
+        checkIdForMatch(id, friendId);
         userStorage.getUsers().get(id).getFriends().remove(friendId);
         userStorage.getUsers().get(friendId).getFriends().remove(id);
         log.info("Пользователь {} удалён из друзей.", userStorage.getUsers().get(friendId));

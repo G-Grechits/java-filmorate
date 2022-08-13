@@ -1,3 +1,3 @@
 # java-filmorate
-Ссылка на ER-диаграмму с кодом:
+Ссылка на ER-диаграмму:
 https://app.quickdatabasediagrams.com/#/d/HYrVru

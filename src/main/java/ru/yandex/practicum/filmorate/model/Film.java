@@ -31,4 +31,5 @@ public class Film {
     @NotNull(message = "Не указан возрастной рейтинг фильма.")
     private Mpa mpa;
     private Set<Genre> genres;
+    private Set<Long> likes;
 }

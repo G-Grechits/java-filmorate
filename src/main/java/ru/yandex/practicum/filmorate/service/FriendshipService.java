@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.ObjectNotFoundException;
 import ru.yandex.practicum.filmorate.exception.SameObjectException;
@@ -17,7 +18,7 @@ public class FriendshipService {
     private final FriendshipStorage friendshipStorage;
     private final UserStorage userStorage;
 
-    public FriendshipService(FriendshipStorage friendshipStorage, UserStorage userStorage) {
+    public FriendshipService(FriendshipStorage friendshipStorage, @Qualifier("userDbStorage") UserStorage userStorage) {
         this.friendshipStorage = friendshipStorage;
         this.userStorage = userStorage;
     }

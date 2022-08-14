@@ -29,9 +29,11 @@ class FilmLikesServiceTest {
     @Test
     void putLikeToFilm() {
         Film testFilm1 = new Film(0, "Служанка", "Корея под властью Японии, начало 20-ого века",
-                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4), null);
+                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4),
+                null, null);
         Film testFilm2 = new Film(0, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2),
+                null, null);
         User testUser1 = new User(0, "user1@mail.ru", "userName1", "userLogin1",
                 LocalDate.of(1990, 8, 30));
         User testUser2 = new User(0, "user2@mail.ru", "userName2", "userLogin2",
@@ -54,9 +56,11 @@ class FilmLikesServiceTest {
     @Test
     void removeLikeFromFilm() {
         Film testFilm1 = new Film(0, "Служанка", "Корея под властью Японии, начало 20-ого века",
-                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4), null);
+                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4),
+                null, null);
         Film testFilm2 = new Film(0, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2),
+                null, null);
         User testUser1 = new User(0, "user1@mail.ru", "userName1", "userLogin1",
                 LocalDate.of(1990, 8, 30));
         User testUser2 = new User(0, "user2@mail.ru", "userName2", "userLogin2",

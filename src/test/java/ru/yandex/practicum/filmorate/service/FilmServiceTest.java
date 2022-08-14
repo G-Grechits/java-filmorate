@@ -26,9 +26,11 @@ class FilmServiceTest {
     @Test
     void getAllFilms() {
         Film testFilm1 = new Film(0, "Служанка", "Корея под властью Японии, начало 20-ого века",
-                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4), null);
+                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4),
+                null, null);
         Film testFilm2 = new Film(0, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2),
+                null, null);
         filmService.createFilm(testFilm1);
         filmService.createFilm(testFilm2);
 
@@ -38,9 +40,11 @@ class FilmServiceTest {
     @Test
     void getFilmById() {
         Film testFilm1 = new Film(0, "Служанка", "Корея под властью Японии, начало 20-ого века",
-                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4), null);
+                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4),
+                null, null);
         Film testFilm2 = new Film(0, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2),
+                null, null);
         Film newFilm1 = filmService.createFilm(testFilm1);
         Film newFilm2 = filmService.createFilm(testFilm2);
 
@@ -53,9 +57,11 @@ class FilmServiceTest {
     @Test
     void createFilm() {
         Film testFilm = new Film(0, "Служанка", "Корея под властью Японии, начало 20-ого века",
-                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4), null);
+                LocalDate.of(2016, 6, 1), 167, mpaService.getMpaById(4),
+                null, null);
         Film fakeFilm = new Film(0, "Служанка", "История о невероятных совпадениях",
-                LocalDate.of(2016, 6, 1), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(2016, 6, 1), 188, mpaService.getMpaById(2),
+                null, null);
         Film newFilm = filmService.createFilm(testFilm);
 
         assertThat(filmService.getFilmById(1)).isEqualTo(newFilm);
@@ -65,11 +71,14 @@ class FilmServiceTest {
     @Test
     void updateFilm() {
         Film testFilm1 = new Film(0, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1999, 12, 8), 10, mpaService.getMpaById(2), null);
+                LocalDate.of(1999, 12, 8), 10, mpaService.getMpaById(2),
+                null, null);
         Film testFilm2 = new Film(1, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(1999, 12, 8), 188, mpaService.getMpaById(2),
+                null, null);
         Film filmWithWrongDate = new Film(1, "Магнолия", "История о невероятных совпадениях",
-                LocalDate.of(1800, 12, 8), 188, mpaService.getMpaById(2), null);
+                LocalDate.of(1800, 12, 8), 188, mpaService.getMpaById(2),
+                null, null);
         filmService.createFilm(testFilm1);
 
         assertThat(filmService.updateFilm(testFilm2).getDuration()).isEqualTo(188);
